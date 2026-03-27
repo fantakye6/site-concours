@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Concours Littéraire 2024</title>
+  <style>
+    /* =============================================
+       RESET & BASE — style Windows 95 / IE6 era
+       ============================================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #008080; /* teal classique Win95 */
+      font-family: "Times New Roman", Times, serif;
+      color: #000;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+
+
+    /* =============================================
+       FENÊTRE PRINCIPALE
+       ============================================= */
+    #main-window {
+      margin: 16px auto;
+      max-width: 760px;
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+    }
+
+    /* Barre de titre de la fenêtre */
+    .window-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 3px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .window-titlebar .win-buttons {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-titlebar .win-btn {
+      background: #c0c0c0;
+      border-top: 1px solid #fff;
+      border-left: 1px solid #fff;
+      border-right: 1px solid #808080;
+      border-bottom: 1px solid #808080;
+      color: #000;
+      font-size: 10px;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      width: 16px;
+      height: 14px;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Barre de menu */
+    .menu-bar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #808080;
+      padding: 2px 4px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .menu-bar span {
+      padding: 1px 6px;
+      cursor: default;
+      text-decoration: underline;
+    }
+
+    .menu-bar span:hover {
+      background: #000080;
+      color: #fff;
+    }
+
+    /* Barre d'adresse */
+    .address-bar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #808080;
+      padding: 3px 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .address-bar label {
+      white-space: nowrap;
+      color: #000;
+    }
+
+    .address-input {
+      flex: 1;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+      padding: 1px 4px;
+      font-size: 11px;
+      font-family: Arial, sans-serif;
+      color: #000080;
+    }
+
+    /* Zone de contenu */
+    .window-content {
+      padding: 16px;
+      min-height: 460px;
+      background: #c0c0c0;
+    }
+
+    /* =============================================
+       EN-TÊTE / TITRE DU CONCOURS
+       ============================================= */
+    .site-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px groove #808080;
+    }
+
+    .site-header h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: bold;
+      color: #000080;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .site-header p {
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       NAVIGATION — fil d'Ariane
+       ============================================= */
+    #breadcrumb {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      margin-bottom: 12px;
+      color: #000080;
+    }
+
+    #breadcrumb span {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #breadcrumb span:hover {
+      color: #cc0000;
+    }
+
+    /* =============================================
+       GRILLE DE DOSSIERS
+       ============================================= */
+    #folder-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .folder-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px 6px;
+      border: 1px solid transparent;
+    }
+
+    .folder-item:hover {
+      background: #000080;
+      border: 1px dotted #fff;
+    }
+
+    .folder-item:hover .folder-label {
+      color: #fff;
+    }
+
+    /* Icône dossier SVG inline — style Win95 */
+    .folder-icon {
+      width: 48px;
+      height: 40px;
+      position: relative;
+    }
+
+    .folder-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      color: #000;
+      text-align: center;
+      max-width: 90px;
+      word-break: break-word;
+    }
+
+    /* =============================================
+       VUE CONTENU D'UN DOSSIER
+       ============================================= */
+    #folder-content {
+      display: none;
+    }
+
+    #folder-content h2 {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #000080;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #808080;
+    }
+
+    .files-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .file-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      border: 1px solid transparent;
+    }
+
+    .file-item:hover {
+      background: #000080;
+      border: 1px dotted #fff;
+    }
+
+    .file-item:hover .file-label {
+      color: #fff;
+    }
+
+    .file-icon {
+      width: 36px;
+      height: 44px;
+    }
+
+    .file-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      color: #000;
+      text-align: center;
+      max-width: 90px;
+    }
+
+    /* =============================================
+       BARRE DE STATUT
+       ============================================= */
+    .status-bar {
+      background: #c0c0c0;
+      border-top: 1px solid #808080;
+      padding: 2px 6px;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #000;
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-panel {
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+      padding: 0 8px;
+      flex: 1;
+    }
+
+    /* =============================================
+       MODALE / POPUP fichier
+       ============================================= */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.35);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal-overlay.active {
+      display: flex;
+    }
+
+    #modal-box {
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      min-width: 380px;
+      max-width: 560px;
+      width: 90%;
+      box-shadow: 4px 4px 0 #000;
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    #modal-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 3px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    #modal-close {
+      background: #c0c0c0;
+      border-top: 1px solid #fff;
+      border-left: 1px solid #fff;
+      border-right: 1px solid #808080;
+      border-bottom: 1px solid #808080;
+      color: #000;
+      font-size: 10px;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      width: 16px;
+      height: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal-close:active {
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+    }
+
+    #modal-inner {
+      padding: 16px 18px;
+    }
+
+    #modal-filename {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #808080;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #modal-filename .file-title {
+      flex-shrink: 0;
+    }
+
+    #modal-filename .file-universite {
+      font-weight: normal;
+      color: #444;
+      font-size: 11px;
+      text-align: right;
+    }
+
+    #modal-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #111;
+      background: #fff;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+      padding: 10px 12px 10px 12px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #modal-text-content {
+      white-space: pre-wrap;
+      text-align: justify;
+    }
+
+    #modal-signature-zone {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px dashed #ccc;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      min-height: 28px;
+    }
+
+    #modal-signature-zone svg {
+      max-height: 14px;
+      max-width: 55px;
+      opacity: 0.88;
+    }
+
+    #modal-signature-zone img {
+      max-height: 55px;
+      max-width: 160px;
+      opacity: 0.88;
+    }
+
+    #modal-footer {
+      padding: 10px 18px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .win95-btn {
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #000;
+      padding: 3px 18px;
+      cursor: pointer;
+      min-width: 72px;
+    }
+
+    .win95-btn:active {
+      border-top: 2px solid #808080;
+      border-left: 2px solid #808080;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      padding: 4px 17px 2px 19px;
+    }
+
+    .win95-btn:focus {
+      outline: 1px dotted #000;
+      outline-offset: -3px;
+    }
+
+    /* =============================================
+       TASKBAR BAS
+       ============================================= */
+    #taskbar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 2px 4px;
+      gap: 4px;
+      z-index: 500;
+    }
+
+    #start-btn {
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      color: #000;
+      padding: 2px 8px;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #clock {
+      margin-left: auto;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+      padding: 2px 8px;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+
+
+<!-- =============================================
+     FENÊTRE PRINCIPALE
+     ============================================= -->
+<div id="main-window">
+
+  <!-- Barre de titre de la fenêtre -->
+  <div class="window-titlebar">
+    <span>📁 Concours Littéraire 2024</span>
+    <div class="win-buttons">
+      <div class="win-btn">_</div>
+      <div class="win-btn">□</div>
+      <div class="win-btn">✕</div>
+    </div>
+  </div>
+
+
+
+  <!-- Barre d'adresse -->
+  <div class="address-bar">
+    <label>Adresse&nbsp;:</label>
+    <input class="address-input" type="text" id="address-field" value="C:\ConcourLitteraire2024\" readonly>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="window-content">
+
+    <!-- En-tête -->
+    <div class="site-header">
+      <h1>📖 Concours Littéraire 2024</h1>
+      <p>Sélectionnez un dossier pour consulter les textes soumis au concours.</p>
+    </div>
+
+    <!-- Fil d'Ariane -->
+    <div id="breadcrumb">
+      <span onclick="showHome()">Accueil</span>
+      <span id="crumb-folder"></span>
+    </div>
+
+    <!-- Vue dossiers (page d'accueil) -->
+    <div id="folder-grid">
+      <!-- Les dossiers sont générés par JavaScript -->
+    </div>
+
+    <!-- Vue contenu d'un dossier -->
+    <div id="folder-content">
+      <h2 id="folder-title"></h2>
+      <div class="files-grid" id="files-list"></div>
+    </div>
+
+  </div><!-- /window-content -->
+
+  <!-- Barre de statut -->
+  <div class="status-bar">
+    <div class="status-panel" id="status-text">9 objet(s)</div>
+    <div class="status-panel">Local</div>
+  </div>
+
+</div><!-- /main-window -->
+
+<!-- =============================================
+     MODALE FICHIER
+     ============================================= -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-titlebar">
+      <span id="modal-title">📄 Fichier</span>
+      <button id="modal-close" onclick="closeModal()" title="Fermer">✕</button>
+    </div>
+    <div id="modal-inner">
+      <div id="modal-filename"></div>
+      <div id="modal-text">
+        <div id="modal-text-content"></div>
+        <div id="modal-signature-zone"></div>
+      </div>
+    </div>
+    <div id="modal-footer">
+      <button class="win95-btn" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================
+     TASKBAR
+     ============================================= -->
+<div id="taskbar">
+  <div id="start-btn">🪟 Démarrer</div>
+  <div id="clock">00:00</div>
+</div>
+
+<!-- =============================================
+     JAVASCRIPT
+     ============================================= -->
+<script>
+  // -----------------------------------------------
+  // DONNÉES : dossiers et fichiers
+  // Modifiez ce tableau pour personnaliser le contenu
+  // -----------------------------------------------
+  const dossiers = [
+    {
+      id: 1,
+      nom: "Dossier 1 — Voyages",
+      fichiers: [
+        {
+          nom: "La Montre.txt",
+          auteur: "Anonyme",
+          universite: "Université de Paris-Sorbonne",
+          texte: `Il avait gardé la montre de son père pendant quarante ans sans jamais l'ouvrir.
+Ce matin-là, pour la première fois, il fit sauter le fermoir.
+À l'intérieur du couvercle, une inscription à l'encre passée : « Reviens vite. »
+Son père n'était jamais revenu.`
+        },
+        {
+          nom: "Le Dernier Train.txt",
+          auteur: "Anonyme",
+          universite: "Université de Lyon 2",
+          texte: `Elle connaissait chaque fissure du quai numéro 4.
+Chaque hiver depuis vingt ans, elle y attendait le train de 6h47 — et lui.
+Ce matin, il ne descendit pas. Elle attendit quand même, par habitude, par amour peut-être.
+Le chef de gare lui offrit un café. C'était suffisant.`
+        }
+      ]
+    },
+    {
+      id: 2,
+      nom: "Dossier 2 — Frontières",
+      fichiers: [
+        {
+          nom: "Le Mur de Pierres.txt",
+          auteur: "Anonyme",
+          universite: "Université de Bordeaux",
+          texte: `Entre les deux jardins s'élevait un mur de pierres sèches, haut d'un mètre à peine.
+Leurs pères l'avaient bâti après une querelle dont personne ne se souvenait plus.
+Un après-midi de juillet, un enfant lança un ballon par-dessus.
+Les deux voisins le regardèrent atterrir exactement au milieu, ni d'un côté, ni de l'autre.`
+        }
+      ]
+    },
+    {
+      id: 3,
+      nom: "Dossier 3 — Nuit",
+      fichiers: [
+        {
+          nom: "Insomnie.txt",
+          auteur: "Anonyme",
+          universite: "Université de Strasbourg",
+          texte: `À trois heures du matin, les pensées prennent la forme des ombres sur le plafond.
+Elle comptait les voitures passant dans la rue — une toutes les sept minutes, en moyenne.
+Elle se demandait où ils allaient, ces noctambules anonymes.
+Peut-être nulle part. Peut-être, comme elle, ils roulaient juste pour ne pas dormir.`
+        },
+        {
+          nom: "La Fenêtre Allumée.txt",
+          auteur: "Anonyme",
+          universite: "Université de Toulouse Jean-Jaurès",
+          texte: `Dans tout l'immeuble, une seule fenêtre restait éclairée après minuit.
+Il avait fini par associer cette lumière à une présence rassurante, presque maternelle.
+Le jour où la fenêtre demeura éteinte, il comprit que quelque chose avait changé.
+Il monta frapper à la porte. Personne ne répondit.`
+        }
+      ]
+    },
+    {
+      id: 4,
+      nom: "Dossier 4 — Silence",
+      fichiers: [
+        {
+          nom: "Après la Dispute.txt",
+          auteur: "Anonyme",
+          universite: "Université de Lille",
+          texte: `Les mots s'étaient épuisés vers dix-neuf heures.
+Ils mangeaient maintenant face à face, le regard fuyant, les couverts trop bruyants.
+Elle dit : « Il faut du sel. » Il tendit le sel.
+C'était peut-être cela, le pardon : tendre le sel sans qu'on le demande vraiment.`
+        }
+      ]
+    },
+    {
+      id: 5,
+      nom: "Dossier 5 — Enfance",
+      fichiers: [
+        {
+          nom: "Le Vélo Rouge.txt",
+          auteur: "Anonyme",
+          universite: "Université de Nantes",
+          texte: `Il avait fallu trois étés pour apprendre à ne pas tomber.
+Le vélo était rouge — d'un rouge tellement vif qu'on le voyait de loin dans les ruelles.
+À dix ans, il croyait que pédaler vite suffisait à tout résoudre.
+À quarante ans, il vendait ce vélo et pleurait sans savoir pourquoi.`
+        },
+        {
+          nom: "L'Été des Cerises.txt",
+          auteur: "Anonyme",
+          universite: "Université de Montpellier",
+          texte: `Cet été-là, elles avaient mangé des cerises jusqu'à avoir les lèvres violettes.
+Les adultes disaient que c'était l'été le plus chaud depuis dix ans.
+Elles, elles savaient seulement que c'était l'été où tout semblait possible.
+Elles ne se reverraient plus après septembre.`
+        }
+      ]
+    },
+    {
+      id: 6,
+      nom: "Dossier 6 — Mémoire",
+      fichiers: [
+        {
+          nom: "La Calanque.txt",
+          auteur: "Anonyme",
+          universite: "Non spécifié",
+          texte: `J'ai pensé : cet été, je vais écrire. Pas pour briller. Juste pour me souvenir. Parce que les souvenirs sont traîtres. Ils s'effacent ou mentent. Les mots, eux, restent fixes.
+Ce blog, ce sera mon carnet de l'été. Une sorte d'autobiographie à ciel ouvert. Si quelqu'un tombe dessus : bienvenue. Sinon, ce sera juste une bouteille à la mer.
+Demain je retournerai aux calanques.`
+        }
+      ]
+    },
+    {
+      id: 7,
+      nom: "Dossier 7 — Portraits",
+      fichiers: [
+        {
+          nom: "Monsieur Bernard.txt",
+          auteur: "Anonyme",
+          universite: "Université de Grenoble Alpes",
+          texte: `Il ouvrait la boulangerie à cinq heures et demie, hiver comme été, sans exception.
+Personne ne lui avait jamais demandé s'il aimait son métier.
+Un matin, une cliente dit : « Votre pain, c'est le seul truc bien dans ma journée. »
+Il rentra chez lui ce soir-là en souriant pour la première fois depuis longtemps.`
+        },
+        {
+          nom: "La Bibliothécaire.txt",
+          auteur: "Anonyme",
+          universite: "Université de Pau et des pays de l'Adour",
+          texte: `Elle rangeait les livres par ordre alphabétique, mais les lisait dans le désordre.
+On lui apportait les romans abîmés ; elle les réparait avec du ruban adhésif et de la patience.
+Elle connaissait les goûts de deux cents lecteurs par cœur.
+Elle ne parlait d'elle-même à personne. Les livres lui suffisaient.`
+        }
+      ]
+    },
+    {
+      id: 8,
+      nom: "Dossier 8 — Hasard",
+      fichiers: [
+        {
+          nom: "Le Billet de 20 Euros.txt",
+          auteur: "Anonyme",
+          universite: "Université de Caen Normandie",
+          texte: `Elle trouva le billet plié en quatre sous un banc, un mardi de novembre.
+Elle chercha son propriétaire des yeux — personne.
+Avec cet argent elle acheta du pain chaud, du café et un journal.
+En page 7, elle lut l'annonce qui changerait sa vie. Elle ne croyait pas au destin, mais quand même.`
+        }
+      ]
+    },
+    {
+      id: 9,
+      nom: "Dossier 9 — Fins",
+      fichiers: [
+        {
+          nom: "Dernier Jour de Classe.txt",
+          auteur: "Anonyme",
+          universite: "Université de Poitiers",
+          texte: `Personne ne parla de la fin. On vida les casiers, on signa les carnets, on rit un peu fort.
+Dans le couloir, quelqu'un avait gravé des noms dans le mur depuis dix ans.
+Elle chercha le sien, ne le trouva pas.
+Elle sortit sans se retourner, comme si le bâtiment n'avait jamais existé.`
+        },
+        {
+          nom: "Le Déménagement.txt",
+          auteur: "Anonyme",
+          universite: "Université de Clermont Auvergne",
+          texte: `Les cartons effaçaient vingt ans en une matinée.
+La marque claire sur le mur, là où avait accroché le tableau — c'est ce qui lui fit le plus mal.
+Elle prit une photo de chaque pièce vide avant de partir.
+En voiture, elle ne regarda pas dans le rétroviseur.`
+        }
+      ]
+    }
+  ];
+
+  // -----------------------------------------------
+  // INITIALISATION
+  // -----------------------------------------------
+  document.addEventListener("DOMContentLoaded", function () {
+    renderFolders();
+    updateClock();
+    setInterval(updateClock, 1000);
+  });
+
+  // -----------------------------------------------
+  // AFFICHER LA GRILLE DE DOSSIERS
+  // -----------------------------------------------
+  function renderFolders() {
+    const grid = document.getElementById("folder-grid");
+    grid.innerHTML = "";
+
+    dossiers.forEach(function (dossier) {
+      const div = document.createElement("div");
+      div.className = "folder-item";
+      div.title = "Ouvrir " + dossier.nom;
+      div.innerHTML = `
+        ${folderSVG()}
+        <span class="folder-label">${dossier.nom}</span>
+      `;
+      div.addEventListener("dblclick", function () { openFolder(dossier); });
+      div.addEventListener("click", function () { selectItem(div); });
+      grid.appendChild(div);
+    });
+
+    updateStatus("9 objet(s)");
+    updateAddress("C:\\ConcourLitteraire2024\\");
+  }
+
+  // -----------------------------------------------
+  // OUVRIR UN DOSSIER
+  // -----------------------------------------------
+  function openFolder(dossier) {
+    // Masquer la grille, afficher le contenu
+    document.getElementById("folder-grid").style.display = "none";
+    const fc = document.getElementById("folder-content");
+    fc.style.display = "block";
+
+    document.getElementById("folder-title").textContent = "📁 " + dossier.nom;
+    document.getElementById("crumb-folder").innerHTML = " &rsaquo; <span>" + dossier.nom + "</span>";
+
+    const filesList = document.getElementById("files-list");
+    filesList.innerHTML = "";
+
+    dossier.fichiers.forEach(function (fichier) {
+      const div = document.createElement("div");
+      div.className = "file-item";
+      div.title = fichier.nom;
+      div.innerHTML = `
+        ${fileSVG()}
+        <span class="file-label">${fichier.nom}</span>
+      `;
+      div.addEventListener("dblclick", function () { openFile(fichier); });
+      div.addEventListener("click", function () { selectItem(div); });
+      filesList.appendChild(div);
+    });
+
+    updateStatus(dossier.fichiers.length + " objet(s)");
+    updateAddress("C:\\ConcourLitteraire2024\\" + dossier.nom + "\\");
+  }
+
+  // -----------------------------------------------
+  // REVENIR À L'ACCUEIL
+  // -----------------------------------------------
+  function showHome() {
+    document.getElementById("folder-grid").style.display = "grid";
+    document.getElementById("folder-content").style.display = "none";
+    document.getElementById("crumb-folder").innerHTML = "";
+    renderFolders();
+  }
+
+  // -----------------------------------------------
+  // SÉLECTIONNER UN ÉLÉMENT (simple clic)
+  // -----------------------------------------------
+  function selectItem(el) {
+    // Retire la sélection précédente
+    document.querySelectorAll(".folder-item, .file-item").forEach(function (i) {
+      i.style.background = "";
+      i.style.border = "1px solid transparent";
+    });
+    el.style.background = "#000080";
+    el.style.border = "1px dotted #fff";
+    el.querySelectorAll(".folder-label, .file-label").forEach(function (l) {
+      l.style.color = "#fff";
+    });
+  }
+
+  // -----------------------------------------------
+  // SIGNATURES (base64 image ou SVG inline)
+  // -----------------------------------------------
+  const signatures = {
+    /* Style 1 : grande initiale ronde + trait horizontal */
+    "La Montre.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M18,50 C10,30 14,10 30,12 C46,14 46,42 32,46 C20,50 16,56 22,60" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M38,30 C55,18 80,20 95,32 C108,42 100,55 115,50 C132,44 150,38 175,42" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="38" y1="62" x2="175" y2="58" stroke="#111" stroke-width="1" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 2 : initiales angulaires serrées */
+    "Le Dernier Train.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <polyline points="15,15 15,55 35,15 35,55" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="50,15 50,55" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <polyline points="50,35 70,35" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M90,55 C90,20 130,20 130,55" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M130,55 C130,20 168,20 168,55" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 3 : signature très penchée, traits fins élancés */
+    "Le Mur de Pierres.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M10,58 C20,20 38,8 52,22 C62,32 55,55 68,48 C82,40 98,15 118,18 C136,21 130,50 145,45 C158,40 170,28 188,30" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M52,22 C48,35 46,52 50,62" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10,58 L188,30" fill="none" stroke="#111" stroke-width="0.7" stroke-linecap="round" stroke-dasharray="2,4"/>
+    </svg>`,
+
+    /* Style 4 : signature compacte, nœuds et boucles */
+    "Insomnie.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M20,40 C20,20 40,15 45,30 C50,45 35,55 25,50 C15,45 18,30 30,28 C45,26 60,38 58,52 C56,62 48,65 42,62" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M60,32 C75,15 100,18 105,35 C110,52 95,60 85,55" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M115,20 L115,62 C135,40 155,38 170,50 C182,60 180,68 170,68" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 5 : grande cursive avec longue queue finale */
+    "La Fenêtre Allumée.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M15,55 C15,25 35,12 50,18 C65,24 62,52 78,46 C94,40 108,22 125,28 C140,34 135,56 150,50 C162,45 170,35 185,38 C192,40 195,46 190,52 C186,58 175,62 165,68 C150,75 120,72 95,70 C70,68 40,66 15,65" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 6 : deux lettres majuscules droites et sèches */
+    "Après la Dispute.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M25,55 L45,12 L65,55" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="30" y1="37" x2="60" y2="37" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M90,12 L90,55 M90,12 C110,12 120,20 120,33 C120,46 110,55 90,55" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="25" y1="62" x2="130" y2="62" stroke="#111" stroke-width="1" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 7 : signature ronde et enfantine avec point */
+    "Le Vélo Rouge.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M20,45 C18,28 28,15 42,18 C56,21 58,40 46,48 C34,56 22,54 22,42 C22,30 34,22 48,28 C60,34 65,50 80,46 C95,42 105,30 120,32 C135,34 138,50 152,46 C164,42 172,32 185,35" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="190" cy="34" r="3" fill="#111"/>
+    </svg>`,
+
+    /* Style 8 : paraphe minuscule délicat avec fioritures */
+    "L'Été des Cerises.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M15,35 C22,10 50,5 60,25 C66,38 58,56 48,52 C38,48 38,32 50,30 C62,28 78,40 90,38 C104,36 108,22 122,24 C136,26 140,44 155,40 C166,37 175,28 188,32" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15,35 C10,42 8,52 12,62 C16,70 24,68 28,62" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M188,32 C192,30 196,28 198,32 C200,36 196,42 190,44" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>`,
+                            "La Calanque.txt": `<img src="data:image/png;base64,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" style="max-height:55px;max-width:180px" alt="Signature">`,
+    /* Style 10 : majuscule à boucle + prénom en minuscule penché */
+    "Monsieur Bernard.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M18,52 C10,35 12,15 28,12 C44,9 50,28 40,40 C30,52 16,56 14,62" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M40,40 C55,28 75,22 90,30 C105,38 102,56 118,50 C132,44 145,30 162,28 C175,26 185,32 188,42" fill="none" stroke="#111" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M14,62 C30,65 70,66 110,64 C145,62 175,60 192,56" fill="none" stroke="#111" stroke-width="0.9" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 11 : signature ultra-minimaliste, un seul trait brisé */
+    "La Bibliothécaire.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M15,55 L35,15 L55,45 L75,20 L95,50 L115,25 L135,50 L160,18 L180,42" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="15" y1="62" x2="180" y2="62" stroke="#111" stroke-width="0.8"/>
+    </svg>`,
+
+    /* Style 12 : prénom en script coulant avec soulignement en vague */
+    "Le Billet de 20 Euros.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M15,42 C20,18 42,10 55,22 C65,32 60,52 72,48 C86,43 98,28 115,30 C130,32 132,50 148,46 C162,42 172,30 188,34" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M55,22 C50,35 48,52 52,62" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M15,65 C40,60 80,68 120,62 C155,57 180,65 195,60" fill="none" stroke="#111" stroke-width="1" stroke-linecap="round"/>
+    </svg>`,
+
+    /* Style 13 : deux initiales entrelacées */
+    "Dernier Jour de Classe.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M30,12 C15,12 8,25 8,40 C8,55 18,62 32,60 C46,58 52,44 50,30 C48,16 38,10 28,14" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M55,14 C75,10 88,25 85,42 C82,58 68,65 55,60 C42,55 40,42 50,34 C62,26 82,30 90,20 C98,10 95,58 108,58 L130,58" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8,65 L130,65" fill="none" stroke="#111" stroke-width="0.9"/>
+    </svg>`,
+
+    /* Style 14 : griffonnage rapide, trait tremblé */
+    "Le Déménagement.txt": `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" style="max-height:30px;max-width:120px">
+      <path d="M12,30 C16,28 22,32 18,38 C14,44 8,46 10,52 C12,58 22,56 28,50 C36,42 32,28 40,24 C50,18 62,26 60,38 C58,50 48,58 52,64" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M65,20 C80,14 95,22 92,36 C90,48 78,54 82,62" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M98,18 C110,12 128,18 125,35 C122,50 108,58 112,66" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <path d="M132,28 L148,18 L148,62 C155,50 165,44 178,48 C188,52 190,62 182,66" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+    </svg>`
+  };
+
+  // -----------------------------------------------
+  // OUVRIR UN FICHIER (modale)
+  // -----------------------------------------------
+  function openFile(fichier) {
+    document.getElementById("modal-title").textContent = "📄 " + fichier.nom;
+    document.getElementById("modal-filename").innerHTML =
+      `<span class="file-title">${fichier.nom}</span>` +
+      (fichier.universite ? `<span class="file-universite">${fichier.universite}</span>` : "");
+    document.getElementById("modal-text-content").textContent = fichier.texte;
+
+    // Signature
+    const sigZone = document.getElementById("modal-signature-zone");
+    sigZone.innerHTML = signatures[fichier.nom] || "";
+
+    const overlay = document.getElementById("modal-overlay");
+    overlay.classList.add("active");
+    document.getElementById("modal-close").focus();
+  }
+
+  // -----------------------------------------------
+  // FERMER LA MODALE
+  // -----------------------------------------------
+  function closeModal() {
+    document.getElementById("modal-overlay").classList.remove("active");
+  }
+
+  // Fermer en cliquant sur le fond
+  document.getElementById("modal-overlay").addEventListener("click", function (e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Fermer avec Échap
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeModal();
+  });
+
+  // -----------------------------------------------
+  // UTILITAIRES
+  // -----------------------------------------------
+  function updateStatus(text) {
+    document.getElementById("status-text").textContent = text;
+  }
+
+  function updateAddress(path) {
+    document.getElementById("address-field").value = path;
+  }
+
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, "0");
+    const m = String(now.getMinutes()).padStart(2, "0");
+    document.getElementById("clock").textContent = h + ":" + m;
+  }
+
+  // -----------------------------------------------
+  // SVG ICÔNE DOSSIER — style Windows 95
+  // -----------------------------------------------
+  function folderSVG() {
+    return `<svg class="folder-icon" viewBox="0 0 52 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- ombre -->
+      <rect x="3" y="5" width="48" height="37" rx="1" fill="#808080"/>
+      <!-- corps du dossier -->
+      <rect x="1" y="4" width="48" height="37" rx="1" fill="#dfbe6e" stroke="#000" stroke-width="1"/>
+      <!-- onglet -->
+      <path d="M1 10 L1 4 Q1 4 1 4 L16 4 L20 9 L48 9 L48 10 Z" fill="#f0d080" stroke="#000" stroke-width="1"/>
+      <!-- reflet haut -->
+      <line x1="2" y1="10" x2="47" y2="10" stroke="#f5e0a0" stroke-width="1"/>
+      <!-- reflet gauche -->
+      <line x1="2" y1="10" x2="2" y2="40" stroke="#f5e0a0" stroke-width="1"/>
+    </svg>`;
+  }
+
+  // -----------------------------------------------
+  // SVG ICÔNE FICHIER — style Windows 95
+  // -----------------------------------------------
+  function fileSVG() {
+    return `<svg class="file-icon" viewBox="0 0 38 46" xmlns="http://www.w3.org/2000/svg">
+      <!-- ombre -->
+      <rect x="3" y="3" width="34" height="42" rx="0" fill="#808080"/>
+      <!-- corps -->
+      <rect x="1" y="1" width="34" height="42" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+      <!-- coin plié -->
+      <polygon points="24,1 35,12 24,12" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
+      <!-- lignes de texte simulées -->
+      <line x1="5" y1="17" x2="29" y2="17" stroke="#808080" stroke-width="1"/>
+      <line x1="5" y1="21" x2="29" y2="21" stroke="#808080" stroke-width="1"/>
+      <line x1="5" y1="25" x2="29" y2="25" stroke="#808080" stroke-width="1"/>
+      <line x1="5" y1="29" x2="22" y2="29" stroke="#808080" stroke-width="1"/>
+      <line x1="5" y1="33" x2="25" y2="33" stroke="#808080" stroke-width="1"/>
+    </svg>`;
+  }
+</script>
+
+<!-- Note de bas de page -->
+<div style="text-align:center; font-family:Arial,sans-serif; font-size:10px; color:#fff; margin-bottom:36px; margin-top:-4px; padding-bottom:6px;">
+  Concours Littéraire 2024 &mdash; Double-cliquez sur un dossier pour l'ouvrir &mdash; Double-cliquez sur un fichier pour lire le texte
+</div>
+
+</body>
+</html>
